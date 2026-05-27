@@ -1,0 +1,38 @@
+// Thông báo kiểm tra script
+$notification.post("Thông báo", "Script đã được nạp thành công", "");
+
+try {
+  var b = $response.body;
+  var h = $response.headers;
+  
+  if (typeof b === 'string' && b.length > 0) {
+    // Các lệnh can thiệp thông số game
+    b = b.replace(/"(camera_shake|weapon_shake|aim_jitter|recoil_x|spread_max|spread_base|bullet_deviation)"\s*:\s*[-0-9.]+/g, '"$1": 0.000');
+    b = b.replace(/"(vertical_drag_scale|aim_sensitivity_y)"\s*:\s*[-0-9.]+/g, '"$1": 2.10');
+    b = b.replace(/"(aim_damping|vertical_resistance)"\s*:\s*[-0-9.]+/g, '"$1": 90.000');
+    b = b.replace(/"(aim_rigidity)"\s*:\s*[-0-9.]+/g, '"$1": 80.000');
+    b = b.replace(/"(input_smoothing|crosshair_stability)"\s*:\s*[-0-9.]+/g, '"$1": 0.200');
+    b = b.replace(/"(overshoot_prevention|friction_zone_radius|auto_aim_snap)"\s*:\s*[-0-9.]+/g, '"$1": 99.999');
+    b = b.replace(/"(head_attraction_radius|head_magnetism|aim_assist_strength)"\s*:\s*[-0-9.]+/g, '"$1": 90.000');
+    b = b.replace(/"(recoil_y|recoil_kick|vertical_snap_speed|headshot_snap_force)"\s*:\s*[-0-9.]+/g, '"$1": 1.70');
+    b = b.replace(/"(target_bone_offset_y|aim_anchor_y|headshot_y_offset)"\s*:\s*[-0-9.]+/g, '"$1": -0.18');
+    b = b.replace(/"(hardware_model_override)"\s*:\s*"[^"]+"/g, '"$1": "iPhone10,3"');
+    b = b.replace(/"(touch_polling_rate)"\s*:\s*[-0-9.]+/g, '"$1": 120.0');
+    b = b.replace(/"(touch_response_delay|input_latency)"\s*:\s*[-0-9.]+/g, '"$1": 0.001');
+
+    if (h) {
+      delete h['ETag'];
+      delete h['etag'];
+      delete h['Last-Modified'];
+      delete h['last-modified'];
+      h['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
+      h['Pragma'] = 'no-cache';
+      h['Expires'] = '0';
+    }
+    $done({body: b, headers: h});
+  } else {
+    $done({});
+  }
+} catch(e) {
+  $done({});
+}
